@@ -22,6 +22,7 @@ function Onlogin(e) {
       console.log(res.data);
       alert("User logged in successfully");
       localStorage.setItem("token", res.data.token);
+      location.replace("http://127.0.0.1:5500/public/app.html");
       //location.replace("http://localhost:3000/login");
     })
     .catch((err) => {
