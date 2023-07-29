@@ -1,21 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="app.css">
 </head>
+
 <body>
-    <h2>Chat</h2><br>
-    <br>
-    <input type="text" id="textinput">
-    <input type="button" value="Send" id="send">
+    
+        <div class="top"> WE Chat
+         
 
-    <p id="chats"></p>
+       
+       <input type="text" placeholder="Invite link" id="invitelink">
+    <button id="invite">Enter</button>
 
 
 
+        </div>
+        <div class="container">
+            <div class="left">
+                <div class="leftdropdown">
+                    <button><i class="fa-solid fa-circle-chevron-down"></i></button>
+                    <div class="content" >
+                        <input type="text" id="newGroupName" placeholder="New Group Name">
+                        <a href="" id="newgroup">Create New Group</a>
+                    </div>
+
+                </div>
+                <input type="text" placeholder="Search Group" id="searchgroup"><br>
+               <p id="grouplist" ></p>
+            </div>
+
+
+            <div class="right" >
+                <p id="groupinfobuttons"></p>
+                <p id="groupinfo"></p>
+
+                <hr>
+
+                <p id="chats"></p>
+                
+                <input type="text" id="textinput">
+                <input type="button" value="Send" id="send">
+
+
+                <div class="dropdown">
+                    <button><i class="fa-solid fa-plus fa-lg"></i></button>
+                    <div class="content">
+                        <a href="">Multimedia</a>
+                        <a href="">Document</a>
+                        <a href="">Sticker</a>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+   
+    <!-- Your other page content here -->
+
+    <!-- Your external scripts here -->
     <script src="app.js"></script>
+    <script src="https://kit.fontawesome.com/c414ae3adc.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
 </body>
+
 </html>

@@ -1,11 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const sequelize = require("../config/database");
-const Op = require("sequelize");
+
 const user = require("../models/messages");
 
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+
 const UserAuthentication = require("../middleware/auth");
 
 router.post("/", UserAuthentication.authenticate, (req, res, next) => {
