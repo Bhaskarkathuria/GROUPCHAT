@@ -193,6 +193,8 @@ function createnewgroup(e) {
     groupitem.classList.add("group-item");
     groupitem.innerText = groupName;
 
+
+
     const edit = document.createElement("button");
     edit.appendChild(document.createTextNode("EditName"));
     edit.classList.add("edit");
@@ -276,6 +278,7 @@ function Onsend(e) {
     .catch((err) => {
       console.log(err);
     });
+    
 }
 
 window.addEventListener("DOMContentLoaded", (req, res, next) => {
@@ -299,6 +302,13 @@ window.addEventListener("DOMContentLoaded", (req, res, next) => {
             console.log("currreeennnt gId", currentgroupid);
             const rightcontainer = document.getElementById("rightcontainer");
             rightcontainer.setAttribute("groupid", currentgroupid);
+
+            const groupinfo = document.getElementById("groupinfo");
+            groupinfo.innerHTML=""
+            const name=document.createElement("h3");
+            name.appendChild(document.createTextNode(groupName));
+            groupinfo.appendChild(name);
+
 
             const previousdata = JSON.parse(
               localStorage.getItem(`messages_${currentgroupid}`)
@@ -357,6 +367,38 @@ window.addEventListener("DOMContentLoaded", (req, res, next) => {
       console.log(err);
     });
 });
+
+const intervalId = setInterval(() => {
+  const currentgroupid = document
+    .getElementById("rightcontainer")
+    .getAttribute("groupid");
+  axios
+    .get(
+      `http://localhost:3000/message?lastidinlocalstorage=${localStorage.getItem(
+        `messages_${currentgroupid}`
+      )}&currentGroupId=${currentgroupid}`
+    )
+    .then((result) => {
+      const data = result.data;
+      const chats = document.getElementById("chats");
+      chats.innerHTML = "";
+
+      data.forEach((element) => {
+        const li = document.createElement("li");
+        li.setAttribute("id", "2");
+        li.appendChild(
+          document.createTextNode(`${element.name}: ${element.text}`)
+        );
+        chats.appendChild(li);
+      });
+
+      // Store the messages in localStorage
+      localStorage.setItem(`messages_${currentgroupid}`, JSON.stringify(data));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}, 1000);
 
 function updateAndDisplayMessages(data, groupId) {
   const chats = document.getElementById("chats");
