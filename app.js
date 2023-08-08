@@ -6,6 +6,7 @@ const signupRoutes = require("./routes/signup");
 const loginRoutes = require("./routes/login");
 const messageRoutes = require("./routes/messages");
 const groupinfoRoutes=require("./routes/group")
+const path = require("path");
 
 const userinfo=require("./models/userinfo");
 const messageinfo=require("./models/messages");
@@ -44,7 +45,7 @@ groupinfo.hasMany(messageinfo)
 messageinfo.belongsTo(groupinfo)
 
 sequelize
-  .sync()
+   .sync()
   // .sync({force:true})
   .then((res) => {
     app.listen(3000);

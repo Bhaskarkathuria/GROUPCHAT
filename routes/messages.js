@@ -9,15 +9,17 @@ const UserAuthentication = require("../middleware/auth");
 
 router.post("/", UserAuthentication.authenticate, (req, res, next) => {
   console.log("bbbboooooddddyyy", req.user);
-
+  console.log("gggggggggggggggggg", req.query.groupid);
   const text = req.body.text;
   const name = req.user.name;
+  const groupinfoId = req.query.groupid;
 
   user
     .create({
       name: name,
       text: text,
       UserInfoId: req.user.id,
+      groupinfoId: groupinfoId,
     })
     .then((result) => {
       return res.json({ success: true, message: "Message Sent" });
@@ -29,11 +31,14 @@ router.post("/", UserAuthentication.authenticate, (req, res, next) => {
 
 router.get("/", (req, res, next) => {
   const lastid = req.query.lastidinlocalstorage;
+  const currentGroupId = req.query.currentGroupId;
+
+  console.log("CCCCCCCGGGGGGGG",currentGroupId)
   console.log(lastid)
 
   if (lastid == undefined) {
     user
-      .findAll()
+      .findAll({where:{groupinfoId:currentGroupId}})
       .then((alldata) => {
         res.send(alldata);
       })
@@ -42,7 +47,7 @@ router.get("/", (req, res, next) => {
       });
   } else {
     user
-      .findAll()
+      .findAll({ where: { groupinfoId: currentGroupId } })
       .then((data) => {
         res.send(data.slice(lastid));
       })
