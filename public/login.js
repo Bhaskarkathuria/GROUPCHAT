@@ -14,7 +14,7 @@ function Onsignup(e) {
 function Onlogin(e) {
   e.preventDefault();
   axios
-    .post("https://16.16.217.62:3000/public/login", {
+    .post("https://16.16.217.62:3000/login", {
       email: emailinput.value,
       password: passwordinput.value,
     })
@@ -22,7 +22,7 @@ function Onlogin(e) {
       console.log(res.data);
       alert("User logged in successfully");
       localStorage.setItem("token", res.data.token);
-      location.replace("https://16.16.217.62:3000/public/app.html");
+      location.replace("https://16.16.217.62:3000/app.html");
       //location.replace("https://16.16.217.62:3000/login");
     })
     .catch((err) => {
