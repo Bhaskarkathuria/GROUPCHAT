@@ -31,7 +31,7 @@ function createlink(e) {
     let inputelement = document.createElement("input");
     inputelement.setAttribute(
       "value",
-      `https://16.16.217.62:3000/group/copylink/addmember/${groupid}`
+      `https://16.16.217.62/group/copylink/addmember/${groupid}`
     );
     document.body.appendChild(inputelement);
     inputelement.select();
@@ -48,7 +48,7 @@ function showgroupmembers(e) {
   const groupid = e.target.parentElement.getAttribute("rightid");
   console.log("GGIIDD", groupid);
   axios
-    .get(`https://16.16.217.62:3000/group/admin/${groupid}`, {
+    .get(`https://16.16.217.62/group/admin/${groupid}`, {
       headers: { Authorization: localStorage.getItem("token") },
     })
     .then((response) => {
@@ -71,7 +71,7 @@ function showgroupmembers(e) {
           deletebutton.addEventListener("click", (e) => {
             e.preventDefault();
             axios.get(
-              `https://16.16.217.62:3000/group/removemember?memberId=${element.member}&groupId=${groupid}`,
+              `https://16.16.217.62/group/removemember?memberId=${element.member}&groupId=${groupid}`,
               {
                 headers: { Authorization: localStorage.getItem("token") },
               }
@@ -95,7 +95,7 @@ function deletegroupfromdatabase(e) {
   const groupid = e.target.parentElement.getAttribute("rightid");
   console.log("deleteIIIDDDD", groupid);
   axios
-    .get(`https://16.16.217.62:3000/group/delete/${groupid}`, {
+    .get(`https://16.16.217.62/group/delete/${groupid}`, {
       headers: { Authorization: localStorage.getItem("token") },
     })
     .then((response) => {
@@ -127,7 +127,7 @@ function editgroupname(e) {
 
     axios
       .post(
-        "https://16.16.217.62:3000/group/editname",
+        "https://16.16.217.62/group/editname",
         { groupName: groupName, groupid: e.target.previousSibling.id },
         { headers: { Authorization: localStorage.getItem("token") } }
       )
@@ -212,7 +212,7 @@ function createnewgroup(e) {
     console.log(groupName);
     axios
       .post(
-        "https://16.16.217.62:3000/group",
+        "https://16.16.217.62/group",
         { groupName: groupName },
         { headers: { Authorization: localStorage.getItem("token") } }
       )
@@ -261,7 +261,7 @@ function Onsend(e) {
 
   axios
     .post(
-      `https://16.16.217.62:3000/message?groupid=${rightid}`,
+      `https://16.16.217.62/message?groupid=${rightid}`,
       {
         text: textinput.value,
       },
@@ -283,7 +283,7 @@ function Onsend(e) {
 
 window.addEventListener("DOMContentLoaded", (req, res, next) => {
   axios
-    .get("https://16.16.217.62:3000/group", {
+    .get("https://16.16.217.62/group", {
       headers: { Authorization: localStorage.getItem("token") },
     })
     .then((response) => {
@@ -317,7 +317,7 @@ window.addEventListener("DOMContentLoaded", (req, res, next) => {
             if (!previousdata || previousdata.length === 0) {
               axios
                 .get(
-                  `https://16.16.217.62:3000/message?lastidinlocalstorage=undefined&currentGroupId=${currentgroupid}`
+                  `https://16.16.217.62/message?lastidinlocalstorage=undefined&currentGroupId=${currentgroupid}`
                 )
                 .then((result) => {
                   const data = result.data.slice(0, 10);
@@ -331,7 +331,7 @@ window.addEventListener("DOMContentLoaded", (req, res, next) => {
                 previousdata[previousdata.length - 1].id;
               axios
                 .get(
-                  `https://16.16.217.62:3000/message?lastidinlocalstorage=${lastidinlocalstorage}&currentGroupId=${currentgroupid}`
+                  `https://16.16.217.62/message?lastidinlocalstorage=${lastidinlocalstorage}&currentGroupId=${currentgroupid}`
                 )
                 .then((result) => {
                   const data = result.data;
@@ -374,7 +374,7 @@ const intervalId = setInterval(() => {
     .getAttribute("groupid");
   axios
     .get(
-      `https://16.16.217.62:3000/message?lastidinlocalstorage=${localStorage.getItem(
+      `https://16.16.217.62/message?lastidinlocalstorage=${localStorage.getItem(
         `messages_${currentgroupid}`
       )}&currentGroupId=${currentgroupid}`
     )
