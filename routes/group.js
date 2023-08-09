@@ -9,8 +9,6 @@ const user = require("../models/groupinfo");
 const UserAuthentication = require("../middleware/auth");
 const GroupUser = require("../models/groupUser");
 
-
-
 router.post("/", UserAuthentication.authenticate, (req, res, next) => {
   const name = req.body.groupName;
   const id = req.user.id;
@@ -55,10 +53,8 @@ router.post("/editname", UserAuthentication.authenticate, (req, res, next) => {
     })
     .catch((error) => {
       console.log(error);
-
     });
 });
-
 
 router.get("/", UserAuthentication.authenticate, (req, res, next) => {
   const userid = req.user.id;
@@ -70,10 +66,7 @@ router.get("/", UserAuthentication.authenticate, (req, res, next) => {
     .catch((error) => {
       console.log(error);
     });
-
-
 });
-
 
 router.get("/delete/:groupid", (req, res, next) => {
   const groupid = req.params.groupid;
@@ -99,12 +92,15 @@ router.get("/delete/:groupid", (req, res, next) => {
     });
 });
 
-router.get("/admin/:groupid", UserAuthentication.authenticate, (req, res, next) => {
-  const groupid = req.params.groupid;
-  console.log("gggggggg",groupid)
-  raw
-    .execute(
-      `SELECT subquery.groupid,
+router.get(
+  "/admin/:groupid",
+  UserAuthentication.authenticate,
+  (req, res, next) => {
+    const groupid = req.params.groupid;
+    console.log("gggggggg", groupid);
+    raw
+      .execute(
+        `SELECT subquery.groupid,
        subquery.admin,
        subquery.member,
        cg.name AS member_name
@@ -117,54 +113,63 @@ FROM (
     WHERE cg.groupinfoId = ${groupid}
 ) AS subquery
 JOIN messageinfos cg ON subquery.member = cg.UserInfoId;
-`)
-    .then((result) => {
-      console.log(result);
-      if (req.user.id == result[0][0].admin) {
-        result[0]//.push(true);
-      } else {
-        result[0]//.push(false);
-      }
-      res.send(result[0]);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}
+`
+      )
+      .then((result) => {
+        console.log(result);
+        if (req.user.id == result[0][0].admin) {
+          result[0]; //.push(true);
+        } else {
+          result[0]; //.push(false);
+        }
+        res.send(result[0]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 );
 
-// http://localhost:3000/group/copylink/addmember/2
-router.get("/copylink/addmember/:groupid", UserAuthentication.authenticate, async (req, res, next) => {
-  const userid = req.user.id;
-  const groupid = req.params.groupid;
-  console.log('uuuuuuuuuuuuuuuuuuuuuuu', userid, groupid)
+// 16.16.217.62:3000/group/copylink/addmember/2
+router.get(
+  "/copylink/addmember/:groupid",
+  UserAuthentication.authenticate,
+  async (req, res, next) => {
+    const userid = req.user.id;
+    const groupid = req.params.groupid;
+    console.log("uuuuuuuuuuuuuuuuuuuuuuu", userid, groupid);
 
-  raw
-    .execute(
-      `SELECT * FROM groupusers 
+    raw
+      .execute(
+        `SELECT * FROM groupusers 
       WHERE GroupId=${req.params.groupid} AND UserId=${req.user.id}`
-    )
-    .then((response) => {
-      if (!response[0][0]) {
-        GroupUser.create({
-          UserId: req.user.id,
-          GroupId: parseInt(req.params.groupid),
-        }).catch((err) => {
-          console.log(err);
-        });
-      } else {
-        res.status(401).send("Already a member.");
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}
+      )
+      .then((response) => {
+        if (!response[0][0]) {
+          GroupUser.create({
+            UserId: req.user.id,
+            GroupId: parseInt(req.params.groupid),
+          }).catch((err) => {
+            console.log(err);
+          });
+        } else {
+          res.status(401).send("Already a member.");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 );
 
-
-router.get("/removemember", UserAuthentication.authenticate, (req, res, next) => {
-  GroupUser.destroy({ where: { Userid: req.query.memberId, GroupId: req.query.groupId } })
-});
+router.get(
+  "/removemember",
+  UserAuthentication.authenticate,
+  (req, res, next) => {
+    GroupUser.destroy({
+      where: { Userid: req.query.memberId, GroupId: req.query.groupId },
+    });
+  }
+);
 
 module.exports = router;
