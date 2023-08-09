@@ -10,7 +10,7 @@ login.addEventListener("click", Onlogin);
 
 function Onlogin(e) {
   e.preventDefault();
-  location.replace("https://16.16.217.62:3000/public/login.html");
+  location.replace("https://16.16.217.62:3000/login.html");
 }
 
 function Onsignup(e) {
