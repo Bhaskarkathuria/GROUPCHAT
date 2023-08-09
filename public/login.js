@@ -8,13 +8,13 @@ signup.addEventListener("click", Onsignup);
 
 function Onsignup(e) {
   e.preventDefault();
-  location.replace("https://16.16.217.62:3000/signup.html");
+  location.replace("http://16.16.217.62:3000/signup.html");
 }
 
 function Onlogin(e) {
   e.preventDefault();
   axios
-    .post("https://16.16.217.62:3000/login", {
+    .post("http://16.16.217.62:3000/login", {
       email: emailinput.value,
       password: passwordinput.value,
     })
@@ -22,8 +22,8 @@ function Onlogin(e) {
       console.log(res.data);
       alert("User logged in successfully");
       localStorage.setItem("token", res.data.token);
-      location.replace("https://16.16.217.62:3000/app.html");
-      //location.replace("https://16.16.217.62:3000/login");
+      location.replace("http://16.16.217.62:3000/app.html");
+      //location.replace("http://16.16.217.62:3000/login");
     })
     .catch((err) => {
       alert("invalid password/user not found");

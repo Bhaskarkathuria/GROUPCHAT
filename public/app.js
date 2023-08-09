@@ -31,7 +31,7 @@ function createlink(e) {
     let inputelement = document.createElement("input");
     inputelement.setAttribute(
       "value",
-      `https://16.16.217.62:3000/group/copylink/addmember/${groupid}`
+      `http://16.16.217.62:3000/group/copylink/addmember/${groupid}`
     );
     document.body.appendChild(inputelement);
     inputelement.select();
@@ -48,7 +48,7 @@ function showgroupmembers(e) {
   const groupid = e.target.parentElement.getAttribute("rightid");
   console.log("GGIIDD", groupid);
   axios
-    .get(`https://16.16.217.62:3000/group/admin/${groupid}`, {
+    .get(`http://16.16.217.62:3000/group/admin/${groupid}`, {
       headers: { Authorization: localStorage.getItem("token") },
     })
     .then((response) => {
@@ -59,7 +59,7 @@ function showgroupmembers(e) {
             document.createTextNode(`Admin: ${element.member_name}`)
           );
           groupinfo.appendChild(li);
-        }else{
+        } else {
           const li = document.createElement("li");
           li.appendChild(
             document.createTextNode(`Member:${element.member_name}`)
@@ -71,19 +71,17 @@ function showgroupmembers(e) {
           deletebutton.addEventListener("click", (e) => {
             e.preventDefault();
             axios.get(
-              `https://16.16.217.62:3000/group/removemember?memberId=${element.member}&groupId=${groupid}`,
+              `http://16.16.217.62:3000/group/removemember?memberId=${element.member}&groupId=${groupid}`,
               {
                 headers: { Authorization: localStorage.getItem("token") },
               }
             );
             groupinfo.removeChild(li);
           });
-          li.appendChild(deletebutton)
+          li.appendChild(deletebutton);
           groupinfo.appendChild(li);
-        } 
+        }
       }
-
-
     })
     .catch((err) => {
       console.log(err);
@@ -95,7 +93,7 @@ function deletegroupfromdatabase(e) {
   const groupid = e.target.parentElement.getAttribute("rightid");
   console.log("deleteIIIDDDD", groupid);
   axios
-    .get(`https://16.16.217.62:3000/group/delete/${groupid}`, {
+    .get(`http://16.16.217.62:3000/group/delete/${groupid}`, {
       headers: { Authorization: localStorage.getItem("token") },
     })
     .then((response) => {
@@ -127,7 +125,7 @@ function editgroupname(e) {
 
     axios
       .post(
-        "https://16.16.217.62:3000/group/editname",
+        "http://16.16.217.62:3000/group/editname",
         { groupName: groupName, groupid: e.target.previousSibling.id },
         { headers: { Authorization: localStorage.getItem("token") } }
       )
@@ -193,8 +191,6 @@ function createnewgroup(e) {
     groupitem.classList.add("group-item");
     groupitem.innerText = groupName;
 
-
-
     const edit = document.createElement("button");
     edit.appendChild(document.createTextNode("EditName"));
     edit.classList.add("edit");
@@ -212,7 +208,7 @@ function createnewgroup(e) {
     console.log(groupName);
     axios
       .post(
-        "https://16.16.217.62:3000/group",
+        "http://16.16.217.62:3000/group",
         { groupName: groupName },
         { headers: { Authorization: localStorage.getItem("token") } }
       )
@@ -261,7 +257,7 @@ function Onsend(e) {
 
   axios
     .post(
-      `https://16.16.217.62:3000/message?groupid=${rightid}`,
+      `http://16.16.217.62:3000/message?groupid=${rightid}`,
       {
         text: textinput.value,
       },
@@ -278,12 +274,11 @@ function Onsend(e) {
     .catch((err) => {
       console.log(err);
     });
-    
 }
 
 window.addEventListener("DOMContentLoaded", (req, res, next) => {
   axios
-    .get("https://16.16.217.62:3000/group", {
+    .get("http://16.16.217.62:3000/group", {
       headers: { Authorization: localStorage.getItem("token") },
     })
     .then((response) => {
@@ -304,11 +299,10 @@ window.addEventListener("DOMContentLoaded", (req, res, next) => {
             rightcontainer.setAttribute("groupid", currentgroupid);
 
             const groupinfo = document.getElementById("groupinfo");
-            groupinfo.innerHTML=""
-            const name=document.createElement("h3");
+            groupinfo.innerHTML = "";
+            const name = document.createElement("h3");
             name.appendChild(document.createTextNode(groupName));
             groupinfo.appendChild(name);
-
 
             const previousdata = JSON.parse(
               localStorage.getItem(`messages_${currentgroupid}`)
@@ -317,7 +311,7 @@ window.addEventListener("DOMContentLoaded", (req, res, next) => {
             if (!previousdata || previousdata.length === 0) {
               axios
                 .get(
-                  `https://16.16.217.62:3000/message?lastidinlocalstorage=undefined&currentGroupId=${currentgroupid}`
+                  `http://16.16.217.62:3000/message?lastidinlocalstorage=undefined&currentGroupId=${currentgroupid}`
                 )
                 .then((result) => {
                   const data = result.data.slice(0, 10);
@@ -331,7 +325,7 @@ window.addEventListener("DOMContentLoaded", (req, res, next) => {
                 previousdata[previousdata.length - 1].id;
               axios
                 .get(
-                  `https://16.16.217.62:3000/message?lastidinlocalstorage=${lastidinlocalstorage}&currentGroupId=${currentgroupid}`
+                  `http://16.16.217.62:3000/message?lastidinlocalstorage=${lastidinlocalstorage}&currentGroupId=${currentgroupid}`
                 )
                 .then((result) => {
                   const data = result.data;
@@ -374,7 +368,7 @@ const intervalId = setInterval(() => {
     .getAttribute("groupid");
   axios
     .get(
-      `https://16.16.217.62:3000/message?lastidinlocalstorage=${localStorage.getItem(
+      `http://16.16.217.62:3000/message?lastidinlocalstorage=${localStorage.getItem(
         `messages_${currentgroupid}`
       )}&currentGroupId=${currentgroupid}`
     )

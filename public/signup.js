@@ -10,13 +10,13 @@ login.addEventListener("click", Onlogin);
 
 function Onlogin(e) {
   e.preventDefault();
-  location.replace("https://16.16.217.62:3000/login.html");
+  location.replace("http://16.16.217.62:3000/login.html");
 }
 
 function Onsignup(e) {
   e.preventDefault();
   axios
-    .post("https://16.16.217.62:3000/signup", {
+    .post("http://16.16.217.62:3000/signup", {
       name: nameinput.value,
       email: emailinput.value,
       Phonenumber: numberinput.value,
