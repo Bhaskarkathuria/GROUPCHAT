@@ -41,10 +41,10 @@ router.post("/editname", UserAuthentication.authenticate, (req, res, next) => {
     .execute(
       `
       UPDATE groupinfos  
-      INNER JOIN groupusers  
-      ON groupinfos.id = groupusers.GroupId  
+      INNER JOIN GroupUsers  
+      ON groupinfos.id = GroupUsers.GroupId  
       SET groupname = ? 
-      WHERE groupusers.GroupId = ?
+      WHERE GroupUsers.GroupId = ${groupid}
       `,
       [newname, groupid] // Passing the values as an array of parameters
     )
@@ -76,9 +76,9 @@ router.get("/delete/:groupid", (req, res, next) => {
       `
     DELETE groupinfos
     FROM groupinfos
-    INNER JOIN groupusers
-    ON groupinfos.id = groupusers.GroupId
-    WHERE groupusers.GroupId = ${groupid}
+    INNER JOIN GroupUsers
+    ON groupinfos.id = GroupUsers.GroupId
+    WHERE GroupUsers.GroupId = ${groupid}
     `
     )
     .then((response) => {
@@ -141,7 +141,7 @@ router.get(
 
     raw
       .execute(
-        `SELECT * FROM groupusers 
+        `SELECT * FROM GroupUsers 
       WHERE GroupId=${req.params.groupid} AND UserId=${req.user.id}`
       )
       .then((response) => {
