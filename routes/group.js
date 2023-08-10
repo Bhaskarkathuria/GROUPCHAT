@@ -108,11 +108,11 @@ FROM (
     SELECT cg.groupinfoId AS groupid,
            cg.UserInfoId AS admin,
            gu.UserId AS member
-    FROM messageinfos cg
+    FROM MessageInfos cg
     JOIN GroupUsers gu ON cg.groupinfoId = gu.GroupId
-    WHERE cg.groupinfoId = ${groupid}
+    WHERE cg.groupinfoId = 1
 ) AS subquery
-JOIN messageinfos cg ON subquery.member = cg.UserInfoId;
+JOIN MessageInfos cg ON subquery.member = cg.UserInfoId;
 `
       )
       .then((result) => {
