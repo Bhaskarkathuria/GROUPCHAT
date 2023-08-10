@@ -110,7 +110,7 @@ FROM (
            gu.UserId AS member
     FROM MessageInfos cg
     JOIN GroupUsers gu ON cg.groupinfoId = gu.GroupId
-    WHERE cg.groupinfoId = 1
+    WHERE cg.groupinfoId = ${groupid}
 ) AS subquery
 JOIN MessageInfos cg ON subquery.member = cg.UserInfoId;
 `
