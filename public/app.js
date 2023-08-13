@@ -9,6 +9,63 @@ const invitelink = document.getElementById("invitelink");
 Send.addEventListener("click", Onsend);
 newGroupButton.addEventListener("click", createnewgroup);
 
+function chooseImage() {
+  document.getElementById("imagefile").click();
+}
+
+function sendImage(event) {
+  const rightid = rightcontainer.getAttribute("groupid");
+
+  var file = event.files[0];
+
+  if (!file.type.match("image.*")) {
+    alert("Please select an image only.");
+  } else {
+    var reader = new FileReader();
+
+    reader.onload = function (event) {
+      const imageData = event.target.result;
+      console.log("IIIIIMMMMMAAAAGGGGGGGEEEEE", imageData);
+
+      // Assuming you're using FormData to send the image data to the backend
+      // var formData = new FormData();
+      // formData.append("image", imageData);
+      // formData.append("groupid", rightid);
+
+      // Send the body along with the form data
+
+      // var data = {
+      //   image: imageData,
+      //   groupid: rightid,
+      // };
+      //console.log("immmageeuploadgroupppiidd",data);
+
+      axios
+        .post(
+          "/image/upload",
+          { image: imageData, groupid: rightid },
+          {
+            headers: {
+              Authorization: localStorage.getItem("token"),
+              //"Content-Type": "multipart/form-data",
+            },
+          }
+        )
+        .then((response) => {
+          // Handle success if needed
+          alert("Image uploaded!");
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+          alert("Error uploading image.");
+        });
+    };
+
+    reader.readAsDataURL(file); // Read the selected image as data URL
+  }
+}
+
 function addnewmember(e) {
   e.preventDefault();
   const invitelink = document.getElementById("invitelink");
@@ -31,7 +88,7 @@ function createlink(e) {
     let inputelement = document.createElement("input");
     inputelement.setAttribute(
       "value",
-      `http://16.171.219.3:3000/group/copylink/addmember/${groupid}`
+      `http://localhost:3000/group/copylink/addmember/${groupid}`
     );
     document.body.appendChild(inputelement);
     inputelement.select();
@@ -48,7 +105,7 @@ function showgroupmembers(e) {
   const groupid = e.target.parentElement.getAttribute("rightid");
   console.log("GGIIDD", groupid);
   axios
-    .get(`http://16.171.219.3:3000/group/admin/${groupid}`, {
+    .get(`http://localhost:3000/group/admin/${groupid}`, {
       headers: { Authorization: localStorage.getItem("token") },
     })
     .then((response) => {
@@ -71,7 +128,7 @@ function showgroupmembers(e) {
           deletebutton.addEventListener("click", (e) => {
             e.preventDefault();
             axios.get(
-              `http://16.171.219.3:3000/group/removemember?memberId=${element.member}&groupId=${groupid}`,
+              `http://localhost:3000/group/removemember?memberId=${element.member}&groupId=${groupid}`,
               {
                 headers: { Authorization: localStorage.getItem("token") },
               }
@@ -93,7 +150,7 @@ function deletegroupfromdatabase(e) {
   const groupid = e.target.parentElement.getAttribute("rightid");
   console.log("deleteIIIDDDD", groupid);
   axios
-    .get(`http://16.171.219.3:3000/group/delete/${groupid}`, {
+    .get(`http://localhost:3000/group/delete/${groupid}`, {
       headers: { Authorization: localStorage.getItem("token") },
     })
     .then((response) => {
@@ -125,7 +182,7 @@ function editgroupname(e) {
 
     axios
       .post(
-        "http://16.171.219.3:3000/group/editname",
+        "http://localhost:3000/group/editname",
         { groupName: groupName, groupid: e.target.previousSibling.id },
         { headers: { Authorization: localStorage.getItem("token") } }
       )
@@ -208,7 +265,7 @@ function createnewgroup(e) {
     console.log(groupName);
     axios
       .post(
-        "http://16.171.219.3:3000/group",
+        "http://localhost:3000/group",
         { groupName: groupName },
         { headers: { Authorization: localStorage.getItem("token") } }
       )
@@ -238,7 +295,7 @@ function createnewgroup(e) {
         console.log(err);
       });
 
-    //location.reload()
+    location.reload()
   }
 }
 
@@ -257,7 +314,7 @@ function Onsend(e) {
 
   axios
     .post(
-      `http://16.171.219.3:3000/message?groupid=${rightid}`,
+      `http://localhost:3000/message?groupid=${rightid}`,
       {
         text: textinput.value,
       },
@@ -277,8 +334,121 @@ function Onsend(e) {
 }
 
 window.addEventListener("DOMContentLoaded", (req, res, next) => {
+
+  function showimage(texturl){
+    const chats = document.getElementById("chats");
+    const locationurl = '"' + texturl + '"';
+    console.log("LOCATION URL",locationurl)
+    
+     axios
+       .get("http://localhost:3000/uploadinfo/", {
+         params: {
+           locationurl: locationurl,
+         },
+       })
+       .then((response) => {
+         const key = response.data[0][0].key;
+         console.log("KKKEEYYYYYY", key);
+
+         axios
+           .get(`/fetchbase64/${key}`, {
+             headers: { Authorization: localStorage.getItem("token") },
+           })
+           .then((response) => {
+             console.log("FETCHBASE RESPONSE", response);
+             const img = document.createElement("img");
+              img.setAttribute("src", `${response.data}`);
+             img.alt = "Image";
+             img.style.maxWidth = "100%";
+             const li = document.createElement("li");
+             li.appendChild(img);
+             chats.appendChild(li);
+           })
+           .catch((error) => {
+             console.log(error);
+           });
+       });
+  }
+
+
+
+  function updateAndDisplayMessages(data, currentgroupid) {
+    
+    const chats = document.getElementById("chats");
+    chats.innerHTML = "";
+
+    data.forEach((element)=>{
+      if (
+        element.text.startsWith("http://") ||
+        element.text.startsWith("https://")
+      ) {
+        showimage(element.text);
+      } else {
+        // Create a text node for regular text messages
+        
+        const li = document.createElement("li");
+        li.appendChild(document.createTextNode(`${element.name}: ${element.text}`));
+        chats.appendChild(li)
+      }
+      const latestMessages = data.slice(-10);
+      localStorage.setItem(`messages`,JSON.stringify(latestMessages));   
+    })
+
+  }
+
+
+  function displaychat(groupitem) {
+    
+    const groupName = groupitem.dataset.groupName;
+
+    const currentgroupid = groupitem.getAttribute("id");
+    console.log("currreeennnt gId", currentgroupid);
+    const rightcontainer = document.getElementById("rightcontainer");
+    rightcontainer.setAttribute("groupid", currentgroupid);
+
+    const groupinfo = document.getElementById("groupinfo");
+    groupinfo.innerHTML = "";
+    const name = document.createElement("h3");
+    name.appendChild(document.createTextNode(groupName));
+    groupinfo.appendChild(name);
+
+    const previousdata = JSON.parse(
+      localStorage.getItem(`messages_${currentgroupid}`)
+    );
+    if (!previousdata || previousdata.length === 0) {
+      axios
+        .get(
+          `http://localhost:3000/message?lastidinlocalstorage=undefined&currentGroupId=${currentgroupid}`,
+          { headers: { Authorization: localStorage.getItem("token") } }
+        )
+        .then((result) => {
+          const data = result.data.slice(0, 10);
+          console.log('uuuuuuuuuuu',data)
+          updateAndDisplayMessages(data, currentgroupid);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      const lastidinlocalstorage = previousdata[previousdata.length - 1].id;
+      axios
+        .get(
+          `http://localhost:3000/message?lastidinlocalstorage=${lastidinlocalstorage}&currentGroupId=${currentgroupid}`,
+          { headers: { Authorization: localStorage.getItem("token") } }
+        )
+        .then((result) => {
+          const data = result.data;
+          console.log("ffffffffff",data)
+           updateAndDisplayMessages(data, currentgroupid);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }
+
   axios
-    .get("http://16.171.219.3:3000/group", {
+    .get("http://localhost:3000/group", {
       headers: { Authorization: localStorage.getItem("token") },
     })
     .then((response) => {
@@ -292,51 +462,10 @@ window.addEventListener("DOMContentLoaded", (req, res, next) => {
           const groupitem = document.createElement("div");
           groupitem.classList.add("group-item");
           groupitem.setAttribute("id", Groupid);
-          groupitem.addEventListener("click", () => {
-            const currentgroupid = groupitem.getAttribute("id");
-            console.log("currreeennnt gId", currentgroupid);
-            const rightcontainer = document.getElementById("rightcontainer");
-            rightcontainer.setAttribute("groupid", currentgroupid);
-
-            const groupinfo = document.getElementById("groupinfo");
-            groupinfo.innerHTML = "";
-            const name = document.createElement("h3");
-            name.appendChild(document.createTextNode(groupName));
-            groupinfo.appendChild(name);
-
-            const previousdata = JSON.parse(
-              localStorage.getItem(`messages_${currentgroupid}`)
-            );
-
-            if (!previousdata || previousdata.length === 0) {
-              axios
-                .get(
-                  `http://16.171.219.3:3000/message?lastidinlocalstorage=undefined&currentGroupId=${currentgroupid}`
-                )
-                .then((result) => {
-                  const data = result.data.slice(0, 10);
-                  updateAndDisplayMessages(data, currentgroupid);
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-            } else {
-              const lastidinlocalstorage =
-                previousdata[previousdata.length - 1].id;
-              axios
-                .get(
-                  `http://16.171.219.3:3000/message?lastidinlocalstorage=${lastidinlocalstorage}&currentGroupId=${currentgroupid}`
-                )
-                .then((result) => {
-                  const data = result.data;
-                  updateAndDisplayMessages(data, currentgroupid);
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-            }
-          });
-
+          groupitem.dataset.groupId = Groupid;
+          groupitem.dataset.groupName = groupName;
+          groupitem.dataset.adminId = Adminid;
+          groupitem.addEventListener("click", ()=>{displaychat(groupitem)});
           groupitem.innerText = groupName;
 
           const edit = document.createElement("button");
@@ -356,55 +485,5 @@ window.addEventListener("DOMContentLoaded", (req, res, next) => {
           console.log(groupName);
         }
       });
-    })
-    .catch((err) => {
-      console.log(err);
     });
 });
-
-const intervalId = setInterval(() => {
-  const currentgroupid = document
-    .getElementById("rightcontainer")
-    .getAttribute("groupid");
-  axios
-    .get(
-      `http://16.171.219.3:3000/message?lastidinlocalstorage=${localStorage.getItem(
-        `messages_${currentgroupid}`
-      )}&currentGroupId=${currentgroupid}`
-    )
-    .then((result) => {
-      const data = result.data;
-      const chats = document.getElementById("chats");
-      chats.innerHTML = "";
-
-      data.forEach((element) => {
-        const li = document.createElement("li");
-        li.setAttribute("id", "2");
-        li.appendChild(
-          document.createTextNode(`${element.name}: ${element.text}`)
-        );
-        chats.appendChild(li);
-      });
-
-      // Store the messages in localStorage
-      localStorage.setItem(`messages_${currentgroupid}`, JSON.stringify(data));
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}, 1000);
-
-function updateAndDisplayMessages(data, groupId) {
-  const chats = document.getElementById("chats");
-  chats.innerHTML = "";
-
-  data.forEach((element) => {
-    const li = document.createElement("li");
-    li.setAttribute("id", "2");
-    li.appendChild(document.createTextNode(`${element.name}: ${element.text}`));
-    chats.appendChild(li);
-  });
-
-  // Store the messages in localStorage
-  localStorage.setItem(`messages_${groupId}`, JSON.stringify(data));
-}

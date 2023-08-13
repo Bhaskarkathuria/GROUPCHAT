@@ -29,7 +29,7 @@ router.post("/", UserAuthentication.authenticate, (req, res, next) => {
     });
 });
 
-router.get("/", (req, res, next) => {
+router.get("/", UserAuthentication.authenticate,(req, res, next) => {
   const lastid = req.query.lastidinlocalstorage;
   const currentGroupId = req.query.currentGroupId;
 
