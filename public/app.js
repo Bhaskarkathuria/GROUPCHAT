@@ -89,7 +89,7 @@ function createlink(e) {
     let inputelement = document.createElement("input");
     inputelement.setAttribute(
       "value",
-      `http://localhost:3000/group/copylink/addmember/${groupid}`
+      `http://16.171.219.3/group/copylink/addmember/${groupid}`
     );
     document.body.appendChild(inputelement);
     inputelement.select();
@@ -106,7 +106,7 @@ function showgroupmembers(e) {
   const groupid = e.target.parentElement.getAttribute("rightid");
   console.log("GGIIDD", groupid);
   axios
-    .get(`http://localhost:3000/group/admin/${groupid}`, {
+    .get(`http://16.171.219.3/group/admin/${groupid}`, {
       headers: { Authorization: localStorage.getItem("token") },
     })
     .then((response) => {
@@ -129,7 +129,7 @@ function showgroupmembers(e) {
           deletebutton.addEventListener("click", (e) => {
             e.preventDefault();
             axios.get(
-              `http://localhost:3000/group/removemember?memberId=${element.member}&groupId=${groupid}`,
+              `http://16.171.219.3/group/removemember?memberId=${element.member}&groupId=${groupid}`,
               {
                 headers: { Authorization: localStorage.getItem("token") },
               }
@@ -151,7 +151,7 @@ function deletegroupfromdatabase(e) {
   const groupid = e.target.parentElement.getAttribute("rightid");
   console.log("deleteIIIDDDD", groupid);
   axios
-    .get(`http://localhost:3000/group/delete/${groupid}`, {
+    .get(`http://16.171.219.3/group/delete/${groupid}`, {
       headers: { Authorization: localStorage.getItem("token") },
     })
     .then((response) => {
@@ -183,7 +183,7 @@ function editgroupname(e) {
 
     axios
       .post(
-        "http://localhost:3000/group/editname",
+        "http://16.171.219.3/group/editname",
         { groupName: groupName, groupid: e.target.previousSibling.id },
         { headers: { Authorization: localStorage.getItem("token") } }
       )
@@ -266,7 +266,7 @@ function createnewgroup(e) {
     console.log(groupName);
     axios
       .post(
-        "http://localhost:3000/group",
+        "http://16.171.219.3/group",
         { groupName: groupName },
         { headers: { Authorization: localStorage.getItem("token") } }
       )
@@ -315,7 +315,7 @@ function Onsend(e) {
 
   axios
     .post(
-      `http://localhost:3000/message?groupid=${rightid}`,
+      `http://16.171.219.3/message?groupid=${rightid}`,
       {
         text: textinput.value,
       },
@@ -342,7 +342,7 @@ window.addEventListener("DOMContentLoaded", (req, res, next) => {
     console.log("LOCATION URL",locationurl)
     
      axios
-       .get("http://localhost:3000/uploadinfo/", {
+       .get("http://16.171.219.3/uploadinfo/", {
          params: {
            locationurl: locationurl,
          },
@@ -424,7 +424,7 @@ window.addEventListener("DOMContentLoaded", (req, res, next) => {
       if (!previousdata || previousdata.length === 0) {
         axios
           .get(
-            `http://localhost:3000/message?lastidinlocalstorage=undefined&currentGroupId=${currentgroupid}`,
+            `http://16.171.219.3/message?lastidinlocalstorage=undefined&currentGroupId=${currentgroupid}`,
             { headers: { Authorization: localStorage.getItem("token") } }
           )
           .then((result) => {
@@ -439,7 +439,7 @@ window.addEventListener("DOMContentLoaded", (req, res, next) => {
         const lastidinlocalstorage = previousdata[previousdata.length - 1].id;
         axios
           .get(
-            `http://localhost:3000/message?lastidinlocalstorage=${lastidinlocalstorage}&currentGroupId=${currentgroupid}`,
+            `http://16.171.219.3/message?lastidinlocalstorage=${lastidinlocalstorage}&currentGroupId=${currentgroupid}`,
             { headers: { Authorization: localStorage.getItem("token") } }
           )
           .then((result) => {
@@ -460,7 +460,7 @@ window.addEventListener("DOMContentLoaded", (req, res, next) => {
 
 
   axios
-    .get("http://localhost:3000/group", {
+    .get("http://16.171.219.3/group", {
       headers: { Authorization: localStorage.getItem("token") },
     })
     .then((response) => {
