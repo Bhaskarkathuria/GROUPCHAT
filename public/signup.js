@@ -29,6 +29,7 @@ function Onsignup(e) {
       //    console.log(password)
 
       alert("Signup Successful");
+      location.replace("http://localhost:3000/login.html");
     })
     .catch((err) => {
       console.log(err);

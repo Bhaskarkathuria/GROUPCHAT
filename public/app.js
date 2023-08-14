@@ -54,6 +54,7 @@ function sendImage(event) {
         .then((response) => {
           // Handle success if needed
           alert("Image uploaded!");
+         // location.reload()
           console.log(response.data);
         })
         .catch((error) => {
@@ -101,7 +102,7 @@ function createlink(e) {
 function showgroupmembers(e) {
   e.preventDefault();
   const groupinfo = document.getElementById("groupinfo");
-
+  groupinfo.innerHTML=""
   const groupid = e.target.parentElement.getAttribute("rightid");
   console.log("GGIIDD", groupid);
   axios
@@ -377,12 +378,14 @@ window.addEventListener("DOMContentLoaded", (req, res, next) => {
     const chats = document.getElementById("chats");
     chats.innerHTML = "";
 
+    let imagesLoaded = false;
+
     data.forEach((element)=>{
-      if (
-        element.text.startsWith("http://") ||
-        element.text.startsWith("https://")
-      ) {
-        showimage(element.text);
+      if (element.text.startsWith("http://") ||element.text.startsWith("https://")) {
+        if (!imagesLoaded) {
+          showimage(element.text);
+          imagesLoaded = true;
+        }
       } else {
         // Create a text node for regular text messages
         
@@ -391,18 +394,19 @@ window.addEventListener("DOMContentLoaded", (req, res, next) => {
         chats.appendChild(li)
       }
       const latestMessages = data.slice(-10);
-      localStorage.setItem(`messages`,JSON.stringify(latestMessages));   
+      localStorage.setItem(`messages`,JSON.stringify(latestMessages));  
+      
+      
     })
 
   }
 
 
   function displaychat(groupitem) {
-    
     const groupName = groupitem.dataset.groupName;
-
     const currentgroupid = groupitem.getAttribute("id");
     console.log("currreeennnt gId", currentgroupid);
+
     const rightcontainer = document.getElementById("rightcontainer");
     rightcontainer.setAttribute("groupid", currentgroupid);
 
@@ -415,37 +419,45 @@ window.addEventListener("DOMContentLoaded", (req, res, next) => {
     const previousdata = JSON.parse(
       localStorage.getItem(`messages_${currentgroupid}`)
     );
-    if (!previousdata || previousdata.length === 0) {
-      axios
-        .get(
-          `http://localhost:3000/message?lastidinlocalstorage=undefined&currentGroupId=${currentgroupid}`,
-          { headers: { Authorization: localStorage.getItem("token") } }
-        )
-        .then((result) => {
-          const data = result.data.slice(0, 10);
-          console.log('uuuuuuuuuuu',data)
-          updateAndDisplayMessages(data, currentgroupid);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      const lastidinlocalstorage = previousdata[previousdata.length - 1].id;
-      axios
-        .get(
-          `http://localhost:3000/message?lastidinlocalstorage=${lastidinlocalstorage}&currentGroupId=${currentgroupid}`,
-          { headers: { Authorization: localStorage.getItem("token") } }
-        )
-        .then((result) => {
-          const data = result.data;
-          console.log("ffffffffff",data)
-           updateAndDisplayMessages(data, currentgroupid);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+
+    function fetchAndDisplayMessages() {
+      if (!previousdata || previousdata.length === 0) {
+        axios
+          .get(
+            `http://localhost:3000/message?lastidinlocalstorage=undefined&currentGroupId=${currentgroupid}`,
+            { headers: { Authorization: localStorage.getItem("token") } }
+          )
+          .then((result) => {
+            const data = result.data.slice(0, 10);
+            console.log("uuuuuuuuuuu", data);
+            updateAndDisplayMessages(data, currentgroupid);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        const lastidinlocalstorage = previousdata[previousdata.length - 1].id;
+        axios
+          .get(
+            `http://localhost:3000/message?lastidinlocalstorage=${lastidinlocalstorage}&currentGroupId=${currentgroupid}`,
+            { headers: { Authorization: localStorage.getItem("token") } }
+          )
+          .then((result) => {
+            const data = result.data;
+            console.log("ffffffffff", data);
+            updateAndDisplayMessages(data, currentgroupid);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
     }
+
+    // Call fetchAndDisplayMessages initially and then set the interval
+    fetchAndDisplayMessages();
+    setInterval(fetchAndDisplayMessages, 2000);
   }
+
 
   axios
     .get("http://localhost:3000/group", {
